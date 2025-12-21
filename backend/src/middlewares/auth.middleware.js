@@ -4,14 +4,17 @@ const logger = require('../utils/logger');
 
 const protect = async (req, res, next) => {
   try {
-    let token;
+    let token = null;
 
-    // Check for token in cookies first (for frontend)
-    if (req.cookies && req.cookies.token) {
+    // 🔹 Priority 1: Cookie (frontend)
+    if (req.cookies?.token) {
       token = req.cookies.token;
     }
-    // Check for token in headers (for API clients)
-    else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    // 🔹 Priority 2: Authorization header (Postman / API)
+    else if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith('Bearer ')
+    ) {
       token = req.headers.authorization.split(' ')[1];
     }
 
@@ -22,51 +25,42 @@ const protect = async (req, res, next) => {
       });
     }
 
-    try {
-      // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Get user from token
-      req.user = await User.findById(decoded.id).select('-password');
+    const user = await User.findById(decoded.id).select('-password');
 
-      if (!req.user) {
-        return res.status(401).json({
-          success: false,
-          message: 'User not found',
-        });
-      }
-
-      if (!req.user.isActive) {
-        return res.status(401).json({
-          success: false,
-          message: 'User account is deactivated',
-        });
-      }
-
-      next();
-    } catch (error) {
-      logger.error('Token verification error:', error);
+    if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Not authorized to access this route',
+        message: 'User not found',
       });
     }
+
+    if (user.isActive === false) {
+      return res.status(401).json({
+        success: false,
+        message: 'User account is deactivated',
+      });
+    }
+
+    req.user = user;
+    next();
   } catch (error) {
     logger.error('Auth middleware error:', error);
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
-      message: 'Server error',
+      message: 'Not authorized to access this route',
     });
   }
 };
 
-// Role-based authorization
+/* ===================== ROLE BASED ===================== */
 const authorize = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    if (!req.user || !roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: `User role '${req.user.role}' is not authorized to access this route`,
+        message: `User role '${req.user?.role}' not authorized`,
       });
     }
     next();
@@ -74,4 +68,3 @@ const authorize = (...roles) => {
 };
 
 module.exports = { protect, authorize };
-
