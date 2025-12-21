@@ -235,7 +235,8 @@ const Chatbot: React.FC<ChatbotProps> = ({
     <div className={embedded ? "w-full" : "fixed bottom-6 right-6 z-50"}>
       {/* OPENED CHAT WINDOW */}
       {isOpen && (
-        <div className="w-full  h-[540px] bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl ring-1 ring-white/20 overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="w-full  h-[540px] bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl ring-1 ring-white/20 overflow-hidden flex flex-col md:backdrop-blur-2xl
+  animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* HEADER */}
           <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-5 text-white relative overflow-hidden">
             <div className="absolute inset-0 bg-white/10" />
@@ -313,7 +314,8 @@ const Chatbot: React.FC<ChatbotProps> = ({
           )}
 
           {/* MESSAGES AREA */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-gradient-to-br from-gray-50 via-indigo-50/30 to-purple-50/20">
+          <div className="flex-1 overflow-y-auto p-5  touch-action-manipulation
+  pointer-events-auto space-y-5 bg-gradient-to-br from-gray-50 via-indigo-50/30 to-purple-50/20">
             {messages.length === 0 && !sessionId && (
               <div className="text-center text-gray-500 mt-10">
                 <FontAwesomeIcon icon={faRobot} size="3x" className="mb-4 text-indigo-300" />
@@ -335,12 +337,17 @@ const Chatbot: React.FC<ChatbotProps> = ({
                     <ReactMarkdown remarkPlugins={[remarkGfm]} >
                       {m.text}
                     </ReactMarkdown>
-                    
+
                     {/* ✅ STEP 3 ADD THIS ONLY */}
       {m.sender === "bot" && (
         <button
           onClick={() => speak(m.text)}
-          className="mt-2 text-sm text-indigo-600 hover:text-indigo-800 font-semibold"
+          onTouchStart={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            speak(m.text);
+          }}
+          className="mt-2 text-sm text-indigo-600 lg:hidden hover:text-indigo-800 font-semibold"
         >
           🔊 Listen
         </button>
