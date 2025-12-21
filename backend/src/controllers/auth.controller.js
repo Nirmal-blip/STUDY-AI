@@ -4,11 +4,14 @@ const logger = require('../utils/logger');
 const { validationResult } = require('express-validator');
 
 /* ===================== COOKIE OPTIONS ===================== */
+// Environment-aware cookie options
+const isProduction = process.env.NODE_ENV === 'production';
 const cookieOptions = {
   httpOnly: true,
-  secure: true,        // 🔥 REQUIRED on Render (HTTPS)
-  sameSite: 'none',    // 🔥 REQUIRED for cross-origin (localhost / Vercel)
+  secure: isProduction,        // true in production (HTTPS), false in development
+  sameSite: isProduction ? 'none' : 'lax',    // 'none' for cross-origin in production, 'lax' for localhost
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  path: '/',
 };
 
 /* ===================== REGISTER ===================== */
@@ -201,8 +204,9 @@ const logout = async (req, res) => {
   try {
     res.clearCookie('token', {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      path: '/',
     });
 
     res.json({

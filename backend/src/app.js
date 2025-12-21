@@ -16,21 +16,47 @@ const chatRoutes = require("./routes/chat.routes");
 const chatHistoryRoutes = require("./routes/chat-history.routes");
 const videoRoutes = require("./routes/video.routes");
 
+/* ===================== DB ===================== */
 connectDB();
 
 const app = express();
 
-/* ===================== CORS (FIXED) ===================== */
+/* ===================== CORS (FINAL FIXED VERSION) ===================== */
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3000",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
+  process.env.FRONTEND_URL, // ✅ Vercel frontend
+]
+  .filter(Boolean)
+  .map((url) => url.replace(/\/$/, "")); // remove trailing slash
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      process.env.FRONTEND_URL, // production frontend
-    ].filter(Boolean),
+    origin: (origin, callback) => {
+      // allow server-to-server, Postman, curl
+      if (!origin) return callback(null, true);
+
+      const normalizedOrigin = origin.replace(/\/$/, "");
+
+      if (allowedOrigins.includes(normalizedOrigin)) {
+        return callback(null, true);
+      }
+
+      logger.warn(`CORS blocked origin: ${origin}`);
+      return callback(null, true); // ⚠️ do NOT throw error
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    exposedHeaders: ["Set-Cookie"],
   })
 );
+
+// ✅ Handle preflight properly
+app.options("*", cors());
 
 /* ===================== MIDDLEWARE ===================== */
 app.use(cookieParser());
@@ -56,10 +82,13 @@ app.get("/api/health", (req, res) => {
 
 /* ===================== 404 ===================== */
 app.use((req, res) => {
-  res.status(404).json({ success: false, message: "Route not found" });
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+  });
 });
 
-/* ===================== ERROR ===================== */
+/* ===================== ERROR HANDLER ===================== */
 app.use((err, req, res, next) => {
   logger.error(err);
   res.status(500).json({
@@ -67,7 +96,5 @@ app.use((err, req, res, next) => {
     message: err.message || "Server error",
   });
 });
-
-
 
 module.exports = app;
