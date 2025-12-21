@@ -1,17 +1,21 @@
-const User = require('../models/User.model');
-const { generateToken } = require('../utils/helpers');
-const logger = require('../utils/logger');
-const { validationResult } = require('express-validator');
+const User = require("../models/User.model");
+const { generateToken } = require("../utils/helpers");
+const logger = require("../utils/logger");
+const { validationResult } = require("express-validator");
 
-/* ===================== COOKIE OPTIONS ===================== */
-// Environment-aware cookie options
-const isProduction = process.env.NODE_ENV === 'production';
+/* ===================== COOKIE OPTIONS (FINAL FIX) ===================== */
+/*
+  IMPORTANT:
+  - Render + Vercel = cross-domain
+  - Cookies MUST be: secure + sameSite:none
+  - DO NOT depend on NODE_ENV
+*/
 const cookieOptions = {
   httpOnly: true,
-  secure: isProduction,        // true in production (HTTPS), false in development
-  sameSite: isProduction ? 'none' : 'lax',    // 'none' for cross-origin in production, 'lax' for localhost
+  secure: true,          // 🔥 REQUIRED (HTTPS)
+  sameSite: "none",      // 🔥 REQUIRED (cross-origin)
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  path: '/',
+  path: "/",
 };
 
 /* ===================== REGISTER ===================== */
@@ -32,16 +36,16 @@ const register = async (req, res) => {
     if (userExists) {
       return res.status(400).json({
         success: false,
-        message: 'User already exists',
+        message: "User already exists",
       });
     }
 
-    // 🔹 map frontend userType → backend role
-    let userRole = role || 'student';
-    if (userType === 'doctor' || userType === 'educator') {
-      userRole = 'teacher';
-    } else if (userType === 'patient' || userType === 'student') {
-      userRole = 'student';
+    // Map frontend userType → backend role
+    let userRole = role || "student";
+    if (userType === "doctor" || userType === "educator") {
+      userRole = "teacher";
+    } else if (userType === "patient" || userType === "student") {
+      userRole = "student";
     }
 
     const user = await User.create({
@@ -53,24 +57,24 @@ const register = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    // 🔥 SET COOKIE (FIXED)
-    res.cookie('token', token, cookieOptions);
+    // ✅ SET COOKIE
+    res.cookie("token", token, cookieOptions);
 
     res.status(201).json({
       success: true,
-      message: 'Registration successful',
+      message: "Registration successful",
       user: {
         userId: user._id.toString(),
         email: user.email,
         fullname: user.name,
-        userType: user.role === 'student' ? 'student' : 'educator',
+        userType: user.role === "student" ? "student" : "educator",
       },
     });
   } catch (error) {
-    logger.error('Register error:', error);
+    logger.error("Register error:", error);
     res.status(500).json({
       success: false,
-      message: 'Server error during registration',
+      message: "Server error during registration",
     });
   }
 };
@@ -89,11 +93,11 @@ const login = async (req, res) => {
 
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select("+password");
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: "Invalid credentials",
       });
     }
 
@@ -101,14 +105,14 @@ const login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: "Invalid credentials",
       });
     }
 
     const token = generateToken(user._id);
 
-    // 🔥 SET COOKIE (FIXED)
-    res.cookie('token', token, cookieOptions);
+    // ✅ SET COOKIE
+    res.cookie("token", token, cookieOptions);
 
     res.json({
       success: true,
@@ -116,14 +120,14 @@ const login = async (req, res) => {
         userId: user._id.toString(),
         email: user.email,
         fullname: user.name,
-        userType: user.role === 'student' ? 'student' : 'educator',
+        userType: user.role === "student" ? "student" : "educator",
       },
     });
   } catch (error) {
-    logger.error('Login error:', error);
+    logger.error("Login error:", error);
     res.status(500).json({
       success: false,
-      message: 'Server error during login',
+      message: "Server error during login",
     });
   }
 };
@@ -132,11 +136,12 @@ const login = async (req, res) => {
 // @route GET /api/auth/me
 const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('-password');
+    const user = await User.findById(req.user._id).select("-password");
+
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User not found',
+        message: "User not found",
       });
     }
 
@@ -146,14 +151,14 @@ const getMe = async (req, res) => {
         userId: user._id.toString(),
         email: user.email,
         fullname: user.name,
-        userType: user.role === 'student' ? 'student' : 'educator',
+        userType: user.role === "student" ? "student" : "educator",
       },
     });
   } catch (error) {
-    logger.error('Get me error:', error);
+    logger.error("Get me error:", error);
     res.status(500).json({
       success: false,
-      message: 'Server error',
+      message: "Server error",
     });
   }
 };
@@ -186,14 +191,17 @@ const updateProfile = async (req, res) => {
         avatar,
       },
       { new: true, runValidators: true }
-    ).select('-password');
+    ).select("-password");
 
-    res.json({ success: true, user });
+    res.json({
+      success: true,
+      user,
+    });
   } catch (error) {
-    logger.error('Update profile error:', error);
+    logger.error("Update profile error:", error);
     res.status(500).json({
       success: false,
-      message: 'Server error',
+      message: "Server error",
     });
   }
 };
@@ -202,22 +210,22 @@ const updateProfile = async (req, res) => {
 // @route GET /api/auth/logout
 const logout = async (req, res) => {
   try {
-    res.clearCookie('token', {
+    res.clearCookie("token", {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
-      path: '/',
+      secure: true,
+      sameSite: "none",
+      path: "/",
     });
 
     res.json({
       success: true,
-      message: 'Logged out successfully',
+      message: "Logged out successfully",
     });
   } catch (error) {
-    logger.error('Logout error:', error);
+    logger.error("Logout error:", error);
     res.status(500).json({
       success: false,
-      message: 'Server error',
+      message: "Server error",
     });
   }
 };
