@@ -33,27 +33,15 @@ const allowedOrigins = [
   .filter(Boolean)
   .map((url) => url.replace(/\/$/, "")); // remove trailing slash
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // allow server-to-server, Postman, curl
-      if (!origin) return callback(null, true);
-
-      const normalizedOrigin = origin.replace(/\/$/, "");
-
-      if (allowedOrigins.includes(normalizedOrigin)) {
-        return callback(null, true);
-      }
-
-      logger.warn(`CORS blocked origin: ${origin}`);
-      return callback(null, true); // ⚠️ do NOT throw error
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    exposedHeaders: ["Set-Cookie"],
-  })
-);
+  app.use(
+    cors({
+      origin: [
+        "http://localhost:5173",
+        "https://study-ai-yq23.vercel.app"
+      ],
+      credentials: true,
+    })
+  );
 
 // ✅ Handle preflight properly
 app.options("*", cors());
