@@ -1,0 +1,35 @@
+# ============================================
+# Root Level Gitignore
+# ============================================
+# This file ignores root-level files and directories
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+Desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs
+*.log
+
+# Environment files (should be in subdirectories)
+.env
+.env.local
+
+node_modules/
+.env
+private/
+uploads/
+dist/
+build/
