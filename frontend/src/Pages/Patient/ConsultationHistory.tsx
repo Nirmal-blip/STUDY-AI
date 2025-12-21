@@ -69,9 +69,11 @@ const NotesSummaryHistory: React.FC = () => {
         { method: "POST", credentials: "include" }
       );
       if (!res.ok) throw new Error("Failed to start summary");
-      
+
       setNotes(prev =>
-        prev.map(n => (n._id === docId ? { ...n, status: "processing" } : n))
+        prev.map(n =>
+          n._id === docId ? { ...n, status: "processing" } : n
+        )
       );
     } catch {
       alert("❌ Failed to start summary generation");
@@ -126,30 +128,32 @@ const NotesSummaryHistory: React.FC = () => {
   const primaryGradient = "bg-gradient-to-r from-indigo-600 to-purple-600";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 relative overflow-hidden">
-      {/* Subtle Background Pattern */}
-      <div
-        className="absolute inset-0 opacity-10 pointer-events-none"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 25 20, 50 50 T 100 50 Q 75 80, 50 50 T 0 50' fill='none' stroke='%236366f1' stroke-width='2' opacity='0.3'/%3E%3C/svg%3E")`,
-          backgroundRepeat: "repeat",
-          backgroundSize: "350px 350px",
-        }}
-      />
-
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       <Sidebar />
 
-      <main className="lg:ml-80 p-6 lg:p-10 relative z-10">
-        
-         {/* HEADER */}
-         <div className="mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-10 shadow-lg text-white">
-          <div className="flex items-center gap-5">
-            <div className="p-4 bg-white/20 rounded-2xl">
-              <FaFilePdf className="w-10 h-10" />
+      <main className="lg:ml-80 p-6 lg:p-10">
+        {/* HEADER */}
+        <div className="mb-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-8 shadow-lg text-white">
+          <div className="flex flex-col lg:flex-row items-center gap-6">
+            {/* GIRL GIF + AUDIO (FIXED RESPONSIVE) */}
+            <div className="flex flex-col items-center gap-4 scale-90 sm:scale-95 lg:scale-100">
+              <img
+                src="/girl-ai.gif"
+                alt="AI Assistant"
+                className="w-40 sm:w-48 lg:w-56"
+              />
+              <audio controls className="w-56 sm:w-64">
+                <source src="/ai-voice.mp3" type="audio/mpeg" />
+                Your browser does not support audio.
+              </audio>
             </div>
-            <div>
+
+            {/* TEXT */}
+            <div className="text-center lg:text-left">
               <h1 className="text-4xl font-bold">Document Summaries</h1>
-              <p className="text-white/90 mt-1">AI-powered insights from your uploaded PDFs</p>
+              <p className="text-white/90 mt-2">
+                AI-powered insights from your uploaded PDFs
+              </p>
             </div>
           </div>
         </div>
@@ -162,123 +166,76 @@ const NotesSummaryHistory: React.FC = () => {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search your documents..."
-              className="w-full pl-14 pr-6 py-5 rounded-2xl bg-white border border-gray-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 text-lg"
+              className="w-full pl-14 pr-6 py-5 rounded-2xl bg-white border shadow-lg focus:ring-2 focus:ring-indigo-500 text-lg"
             />
           </div>
         </div>
 
-        {/* CARDS GRID */}
+        {/* CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
           {filteredNotes.map(note => (
             <div
               key={note._id}
-              className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02]"
+              className="bg-white rounded-3xl shadow-xl border p-8 hover:shadow-2xl transition"
             >
-              <div className="p-8">
-                {/* Badge */}
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-6">
-                  <FaFilePdf className="text-indigo-600" />
-                  {note.type.toUpperCase()}
-                </div>
-
-                {/* Title */}
-                <h3 className="text-2xl font-bold text-gray-900 mb-5 line-clamp-1 leading-tight">
-                  {note.title}
-                </h3>
-
-                {/* Metadata */}
-                <div className="flex items-center gap-6 text-gray-600 mb-4">
-                  <span className="flex items-center gap-2 text-sm font-medium">
-                    <FaClock className="text-indigo-500" />
-                    {note.metadata?.pageCount ?? "-"} pages
-                  </span>
-                  <span className="flex items-center gap-2 text-sm font-medium">
-                    <FaBrain className="text-purple-500" />
-                    AI Summary
-                  </span>
-                </div>
-
-                {/* Status Content */}
-                {note.status === "idle" && (
-                  <button
-                    onClick={() => generateSummary(note._id)}
-                    disabled={loadingId === note._id}
-                    className={`w-full ${primaryGradient} text-white font-semibold py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg`}
-                  >
-                    {loadingId === note._id ? (
-                      <>
-                        <FaSpinner className="animate-spin" />
-                        Starting...
-                      </>
-                    ) : (
-                      "Generate Summary"
-                    )}
-                  </button>
-                )}
-
-                {note.status === "processing" && (
-                  <div className="text-center py-10 bg-gradient-to-b from-gray-50 to-white rounded-2xl border border-gray-200">
-                    <FaSpinner className="mx-auto text-4xl text-indigo-600 animate-spin mb-4" />
-                    <p className="font-semibold text-gray-800 text-lg">Generating Summary</p>
-                    <p className="text-gray-500 mt-2">This usually takes 1–3 minutes</p>
-                  </div>
-                )}
-
-                {note.status === "ready" && (
-                  <div className="space-y-6">
-                    <div className="p-6 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-100 shadow-inner">
-                      <div className="flex items-center gap-2 text-green-700 mb-4">
-                        <FaCheckCircle className="text-xl" />
-                        <span className="font-semibold text-lg">Summary Ready</span>
-                      </div>
-                      <div className="text-gray-700 text-base line-clamp-4 leading-relaxed prose prose-sm">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                          {note.summary || ""}
-                        </ReactMarkdown>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setActiveNote(note);
-                        setSummaryOpen(true);
-                      }}
-                      className={`w-full ${primaryGradient} text-white font-semibold py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg`}
-                    >
-                      View Full Summary
-                    </button>
-                  </div>
-                )}
-
-                {note.status === "failed" && (
-                  <div className="space-y-6">
-                    <div className="p-6 bg-red-50 rounded-2xl border border-red-200 text-center shadow-inner">
-                      <FaExclamationTriangle className="mx-auto text-4xl text-red-600 mb-4" />
-                      <p className="font-semibold text-red-700 text-lg">Generation Failed</p>
-                    </div>
-                    <button
-                      onClick={() => generateSummary(note._id)}
-                      className={`w-full ${primaryGradient} text-white font-semibold py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg`}
-                    >
-                      Retry Summary
-                    </button>
-                  </div>
-                )}
-
-                {/* View PDF Link */}
-                {pdfUrl(note) && (
-                  <div className="mt-8 pt-6 border-t border-gray-200">
-                    <a
-                      href={pdfUrl(note)!}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full flex items-center justify-center gap-3 text-indigo-600 hover:text-indigo-800 font-semibold py-3 transition-colors duration-200 text-lg"
-                    >
-                      <FaEye className="text-xl" />
-                      Open Original PDF
-                    </a>
-                  </div>
-                )}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full mb-4">
+                <FaFilePdf /> {note.type.toUpperCase()}
               </div>
+
+              <h3 className="text-2xl font-bold mb-4">{note.title}</h3>
+
+              {note.status === "idle" && (
+                <button
+                  onClick={() => generateSummary(note._id)}
+                  className={`w-full ${primaryGradient} text-white py-4 rounded-xl font-semibold`}
+                >
+                  Generate Summary
+                </button>
+              )}
+
+              {note.status === "processing" && (
+                <div className="text-center py-6">
+                  <FaSpinner className="animate-spin mx-auto text-3xl text-indigo-600" />
+                  <p className="mt-2 font-semibold">Processing...</p>
+                </div>
+              )}
+
+              {note.status === "ready" && (
+                <>
+                  <div className="prose prose-sm line-clamp-4">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {note.summary || ""}
+                    </ReactMarkdown>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setActiveNote(note);
+                      setSummaryOpen(true);
+                    }}
+                    className={`mt-4 w-full ${primaryGradient} text-white py-3 rounded-xl`}
+                  >
+                    View Full Summary
+                  </button>
+                </>
+              )}
+
+              {note.status === "failed" && (
+                <div className="text-red-600 text-center font-semibold">
+                  Failed. Try again.
+                </div>
+              )}
+
+              {pdfUrl(note) && (
+                <a
+                  href={pdfUrl(note)!}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block mt-4 text-indigo-600 font-semibold text-center"
+                >
+                  <FaEye className="inline mr-2" />
+                  Open PDF
+                </a>
+              )}
             </div>
           ))}
         </div>
