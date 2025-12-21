@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaCalendar, FaClock, FaVideo, FaStethoscope, FaTimes } from 'react-icons/fa';
-import axios from 'axios';
+import apiClient from '../api/axios';
 // import { getVideoCallNotificationService } from '../utils/video-call-notifications'; // Removed
 
 interface Doctor {
@@ -113,19 +113,15 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
 
     try {
       // Get current patient ID
-      const patientResponse = await axios.get(`${(import.meta as any).env.VITE_BACKEND_URL}/api/patients/me`, {
-        withCredentials: true
-      });
+      const patientResponse = await apiClient.get("/api/patients/me");
       
-      const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND_URL}/api/appointments`, {
+      const response = await apiClient.post("/api/appointments", {
         doctor: doctor._id,
         patient: patientResponse.data._id,
         date: selectedDate,
         time: selectedTime,
         reason: reason.trim(),
         status: 'Pending'
-      }, {
-        withCredentials: true
       });
 
       console.log('Appointment booked successfully:', response.data);

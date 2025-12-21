@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../../Components/Sidebar";
-import axios from "axios";
+import apiClient from "../../api/axios";
 import { toast } from "react-toastify";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -48,8 +48,8 @@ const UploadedFilesPage: React.FC = () => {
     try {
       setIsLoading(true);
       const [docsRes, videosRes] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/upload/documents`, { withCredentials: true }),
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/video`, { withCredentials: true }),
+        apiClient.get("/api/upload/documents"),
+        apiClient.get("/api/video"),
       ]);
 
       const docs: StudySource[] = docsRes.data.documents.map((doc: any) => ({
@@ -101,9 +101,7 @@ const UploadedFilesPage: React.FC = () => {
       const formData = new FormData();
       formData.append("file", selectedFile);
       if (pdfTitle.trim()) formData.append("title", pdfTitle.trim());
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload/pdf`, formData, {
-        withCredentials: true,
-      });
+      await apiClient.post("/api/upload/pdf", formData);
       toast.success("PDF uploaded successfully!");
       setShowPDFModal(false);
       setSelectedFile(null);
@@ -117,11 +115,10 @@ const UploadedFilesPage: React.FC = () => {
   const handleYouTubeUpload = async () => {
     if (!youtubeUrl.trim()) return toast.error("Enter a valid YouTube URL");
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/video/add`,
-        { youtubeUrl: youtubeUrl.trim(), title: youtubeTitle.trim() || undefined },
-        { withCredentials: true }
-      );
+      const response = await apiClient.post("/api/video/add", {
+        youtubeUrl: youtubeUrl.trim(),
+        title: youtubeTitle.trim() || undefined,
+      });
       toast.success(response.data.message || "YouTube video added!");
       setShowYouTubeModal(false);
       setYoutubeUrl("");
@@ -138,7 +135,7 @@ const UploadedFilesPage: React.FC = () => {
     if (!window.confirm("Delete this item permanently?")) return;
     try {
       const url = type === "youtube" ? `/api/video/${id}` : `/api/upload/documents/${id}`;
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}${url}`, { withCredentials: true });
+      await apiClient.delete(url);
       toast.success("Deleted successfully!");
       fetchSources();
     } catch {

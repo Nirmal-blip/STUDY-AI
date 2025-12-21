@@ -5,7 +5,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import axios from "axios";
+import apiClient from "../api/axios";
 
 interface User {
   userId: string;
@@ -37,10 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setIsLoading(true);
 
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/me`,
-        { withCredentials: true }
-      );
+      const res = await apiClient.get("/api/auth/me");
 
       if (res.data?.user) {
         setUser(res.data.user);
@@ -60,22 +57,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     password: string,
     userType: "student" | "educator"
   ) => {
-    const res = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
-      { email, password, userType },
-      { withCredentials: true }
-    );
+    const res = await apiClient.post("/api/auth/login", {
+      email,
+      password,
+      userType,
+    });
 
     setUser(res.data.user);
   };
 
   /* ===================== REGISTER ===================== */
   const register = async (formData: any) => {
-    const res = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
-      formData,
-      { withCredentials: true }
-    );
+    const res = await apiClient.post("/api/auth/register", formData);
 
     setUser(res.data.user);
   };
@@ -83,10 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   /* ===================== LOGOUT ===================== */
   const logout = async () => {
     try {
-      await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`,
-        { withCredentials: true }
-      );
+      await apiClient.get("/api/auth/logout");
     } finally {
       setUser(null);
     }

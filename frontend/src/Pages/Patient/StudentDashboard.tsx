@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiClient from "../../api/axios";
 import {
   FaCalendar,
   FaUsers,
@@ -61,18 +61,9 @@ const StudentDashboard: React.FC = () => {
     const fetchStats = async () => {
       try {
         const [docsRes, videoRes, chatRes] = await Promise.all([
-          axios.get(
-            `${import.meta.env.VITE_BACKEND_URL}/api/upload/documents`,
-            { withCredentials: true }
-          ),
-          axios.get(
-            `${import.meta.env.VITE_BACKEND_URL}/api/video`,
-            { withCredentials: true }
-          ),
-          axios.get(
-            `${import.meta.env.VITE_BACKEND_URL}/api/chat/messages/count`,
-            { withCredentials: true }
-          ),
+          apiClient.get("/api/upload/documents"),
+          apiClient.get("/api/video"),
+          apiClient.get("/api/chat/messages/count"),
         ]);
 
         const documents = docsRes.data.documents || [];
