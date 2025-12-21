@@ -109,3 +109,26 @@ If you encounter CORS issues:
 3. Ensure both services are restarted after env changes
 4. Check browser console for specific error messages
 
+
+## Setting Environment Variables in Vercel
+
+### For Frontend (Vite)
+
+1. Go to your Vercel project dashboard
+2. Navigate to **Settings** → **Environment Variables**
+3. Add the following variable:
+   - **Key:** `VITE_BACKEND_URL`
+   - **Value:** `https://study-ai-kgxs.onrender.com` (or your backend URL)
+   - **Environment:** Select all (Production, Preview, Development)
+
+4. **Important:** After adding environment variables, you need to:
+   - Redeploy your application, OR
+   - Go to **Deployments** → Click the three dots on latest deployment → **Redeploy**
+
+### Why not in vercel.json?
+
+- Vite environment variables (prefixed with `VITE_`) are build-time variables
+- They need to be set in Vercel's Environment Variables section
+- The `vercel.json` file is for routing, headers, and build configuration only
+- Environment variables in `vercel.json` use Vercel secrets syntax (`@secret_name`), which is for serverless functions, not build-time variables
+
