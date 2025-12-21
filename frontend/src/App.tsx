@@ -22,7 +22,6 @@ import Notifications from './Pages/Patient/Upload'
 import SignupPage from './Pages/SignupPage'
 import SigninPage from './Pages/SigninPage'
 
-import ProtectedRoute from './Components/ProtectedRoute'
 
 const App: React.FC = () => {
   return (
@@ -33,15 +32,10 @@ const App: React.FC = () => {
             <Route path='/signup' element={<SignupPage />}></Route>
             <Route path='/signin' element={<SigninPage />}></Route>
 
-            {/* Protected routes */}
-          
+            
             <Route path='/study-sessions' element={<ConsultationHistory />}></Route>
-            {/* <Route path='/doctors-list' element={<ProtectedRoute><DoctorsList /></ProtectedRoute>}></Route> */}
             <Route path='/ai-chat' element={<AiTutor />}></Route>
-            {/* <Route path='/patient/doctors' element={<ProtectedRoute><DoctorsList /></ProtectedRoute>}></Route> */}
-            {/* <Route path='/medicine-recommendation' element={<ProtectedRoute><MedicineRecommendation /></ProtectedRoute>}></Route> */}
            
-            {/* <Route path='/patient-dashboard' element={<ProtectedRoute><PatientDashboard /></ProtectedRoute>}></Route> */}
             <Route path='/student-dashboard' element={<StudentDashboard />}></Route>
             
           
