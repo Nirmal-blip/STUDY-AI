@@ -335,6 +335,16 @@ const Chatbot: React.FC<ChatbotProps> = ({
                     <ReactMarkdown remarkPlugins={[remarkGfm]} >
                       {m.text}
                     </ReactMarkdown>
+                    
+                    {/* ✅ STEP 3 ADD THIS ONLY */}
+      {m.sender === "bot" && (
+        <button
+          onClick={() => speak(m.text)}
+          className="mt-2 text-sm text-indigo-600 hover:text-indigo-800 font-semibold"
+        >
+          🔊 Listen
+        </button>
+      )}
                     </div>
                   </div>
 
