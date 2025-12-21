@@ -22,10 +22,43 @@ connectDB();
 
 const app = express();
 
-// Middleware
+// Middleware - CORS Configuration
+const allowedOrigins = [
+  // Local development origins
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:5174',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:3000',
+  // Add production frontend URLs from environment
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+  // Allow multiple frontend URLs from environment (comma-separated)
+  ...(process.env.FRONTEND_URLS ? process.env.FRONTEND_URLS.split(',').map(url => url.trim()) : [])
+];
+
+// Remove duplicates
+const uniqueOrigins = [...new Set(allowedOrigins)];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, Postman, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin is in allowed list
+    if (uniqueOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      // Log blocked origins for debugging
+      logger.warn(`CORS blocked origin: ${origin}. Allowed origins: ${uniqueOrigins.join(', ')}`);
+      callback(new Error(`Not allowed by CORS. Origin: ${origin}`));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Cookie'],
+  exposedHeaders: ['Set-Cookie'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 app.use(cookieParser());
 app.use(express.json());
