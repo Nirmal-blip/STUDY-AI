@@ -11,8 +11,8 @@ faster-whisper==0.10.0
 # YouTube download
 yt-dlp==2023.11.16
 
-# Audio processing (yt-dlp dependency)
-ffmpeg-python==0.2.0
+# Note: ffmpeg-python is not needed - yt-dlp uses ffmpeg system binary directly
+# ffmpeg is installed via apt-get in Dockerfile
 
 # Utilities
 python-dotenv==1.0.0
