@@ -70,13 +70,13 @@ const addVideo = async (req, res) => {
         .json({ success: false, message: "Invalid YouTube URL. Please provide a valid YouTube URL." });
     }
 
-    // const existingVideo = await Video.findOne({ youtubeId, uploadedBy: req.user._id, isActive: true });
-    // if (existingVideo) {
-    //   logger.warn("Video already exists:", youtubeId);
-    //   return res
-    //     .status(400)
-    //     .json({ success: false, message: "This video has already been added" });
-    // }
+    const existingVideo = await Video.findOne({ youtubeId, uploadedBy: req.user._id, isActive: true });
+    if (existingVideo) {
+      logger.warn("Video already exists:", youtubeId);
+      return res
+        .status(400)
+        .json({ success: false, message: "This video has already been added" });
+    }
 
     const video = await Video.create({
       title: title || "Untitled Video",

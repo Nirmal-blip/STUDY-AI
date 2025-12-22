@@ -39,3 +39,5 @@ exports.getTranscript = async (videoId) => {
     return { transcript: null, metadata: {} };
   }
 };
+
+
