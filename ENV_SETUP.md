@@ -135,3 +135,5 @@ VITE_BACKEND_URL=http://localhost:3000
 - Restart your servers after changing environment variables
 - In production, set environment variables through your hosting platform (Vercel, Heroku, etc.)
 
+
+

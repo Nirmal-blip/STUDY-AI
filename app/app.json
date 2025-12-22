@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "Notebook AI Study Assistant",
+    "slug": "notebook-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#6366f1"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.notebook.studyassistant"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#6366f1"
+      },
+      "package": "com.notebook.studyassistant"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font"
+    ],
+    "scheme": "notebook",
+    "extra": {
+      "eas": {
+        "projectId": "8f773d45-cee8-4725-8779-5610d7a29c09"
+      }
+    },
+    "owner": "nirmal-blip"
+  }
+}

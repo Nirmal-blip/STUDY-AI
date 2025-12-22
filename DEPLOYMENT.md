@@ -132,3 +132,5 @@ If you encounter CORS issues:
 - The `vercel.json` file is for routing, headers, and build configuration only
 - Environment variables in `vercel.json` use Vercel secrets syntax (`@secret_name`), which is for serverless functions, not build-time variables
 
+
+
