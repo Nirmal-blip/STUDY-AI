@@ -70,14 +70,7 @@ const addVideo = async (req, res) => {
         .json({ success: false, message: "Invalid YouTube URL. Please provide a valid YouTube URL." });
     }
 
-    const existingVideo = await Video.findOne({ youtubeId, uploadedBy: req.user._id, isActive: true });
-    if (existingVideo) {
-      logger.warn("Video already exists:", youtubeId);
-      return res
-        .status(400)
-        .json({ success: false, message: "This video has already been added" });
-    }
-
+    // Allow multiple uploads of the same video URL
     const video = await Video.create({
       title: title || "Untitled Video",
       youtubeUrl,
@@ -130,7 +123,6 @@ const getVideoById = async (req, res) => {
     const video = await Video.findOne({
       _id: req.params.id,
       uploadedBy: req.user._id,
-      isActive: true,
     });
 
     if (!video) {
@@ -173,16 +165,27 @@ const deleteVideo = async (req, res) => {
     });
 
     if (!video) {
-      return res.status(404).json({ success: false });
+      return res.status(404).json({ 
+        success: false, 
+        message: "Video not found" 
+      });
     }
 
-    video.isActive = false;
-    await video.save();
+    // Actually delete from database (hard delete)
+    await Video.findByIdAndDelete(req.params.id);
 
-    res.json({ success: true });
+    logger.info(`Video deleted: ${req.params.id} by user ${req.user._id}`);
+
+    res.json({ 
+      success: true, 
+      message: "Video deleted successfully" 
+    });
   } catch (error) {
     logger.error("Delete video error:", error);
-    res.status(500).json({ success: false });
+    res.status(500).json({ 
+      success: false, 
+      message: "Failed to delete video" 
+    });
   }
 };
 
@@ -194,7 +197,6 @@ const generateVideoSummary = async (req, res) => {
     const video = await Video.findOne({
       _id: req.params.id,
       uploadedBy: req.user._id,
-      isActive: true,
     });
 
     if (!video) {

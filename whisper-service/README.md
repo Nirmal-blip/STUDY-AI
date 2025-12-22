@@ -8,6 +8,8 @@ FastAPI service for YouTube video transcription using faster-whisper.
 - **Audio File Upload**: Supports direct audio file transcription
 - **Automatic Cleanup**: Temporary files are automatically cleaned up
 - **Production Ready**: Proper error handling, timeouts, and logging
+- **Docker Support**: Ready-to-deploy Docker container
+- **Native Format Support**: Downloads audio in native formats (webm, m4a, mp3, opus) without conversion
 
 ## Setup
 

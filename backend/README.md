@@ -220,14 +220,54 @@ Make sure your frontend `.env` has:
 VITE_BACKEND_URL=http://localhost:5000
 ```
 
-## Python AI Service Integration
+## Python Whisper Service Integration
 
-For advanced AI features (TTS, etc.), you can integrate a Python service:
+The backend integrates with a separate FastAPI Whisper service for YouTube video transcription.
 
-1. Set `PYTHON_AI_SERVICE_URL` in `.env`
-2. The Python service should expose endpoints like:
-   - `POST /api/tts` - Text-to-speech
-   - `POST /api/chat/stream` - Streaming chat responses
+### Setup
+
+1. **Deploy the Whisper Service** (see `whisper-service/` directory)
+   - Deploy to Render, Railway, or VPS
+   - Get the service URL (e.g., `https://whisper-service.onrender.com`)
+
+2. **Configure Backend**
+   - Set `PYTHON_AI_SERVICE_URL` in `.env`:
+     ```env
+     # Local development
+     PYTHON_AI_SERVICE_URL=http://localhost:8000
+     
+     # Production
+     PYTHON_AI_SERVICE_URL=https://your-whisper-service.onrender.com
+     ```
+
+3. **How It Works**
+   - When a YouTube video is added, the backend sends the URL to the Whisper service
+   - The Whisper service downloads audio, transcribes it, and returns the transcript
+   - The backend stores the transcript in the database
+
+### Endpoints Used
+
+The Whisper service should expose:
+- `POST /transcribe-youtube` - Transcribe YouTube video from URL
+- `GET /health` - Health check endpoint
+
+### Deployment
+
+When deploying the backend to production:
+
+1. **Set Environment Variables** on your hosting platform:
+   - `PYTHON_AI_SERVICE_URL` - Your deployed Whisper service URL
+   - All other required variables (see Environment Variables section)
+
+2. **Verify Connection**:
+   ```bash
+   curl https://your-whisper-service-url/health
+   ```
+
+3. **Test Transcription**:
+   - Add a YouTube video from your frontend
+   - Check backend logs for transcription progress
+   - Verify video status changes to "ready" in database
 
 ## Error Handling
 
@@ -291,7 +331,5 @@ ISC
 ## Support
 
 For issues or questions, please contact the development team.
-
-
 
 

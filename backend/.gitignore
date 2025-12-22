@@ -31,11 +31,17 @@ lerna-debug.log*
 # ============================================
 uploads/*
 !uploads/.gitkeep
+!uploads/pdf/.gitkeep
+!uploads/audio/.gitkeep
+!uploads/images/.gitkeep
 temp/
 tmp/
 *.mp3
 *.webm
 *.wav
+*.m4a
+*.opus
+*.ogg
 
 # ============================================
 # OS Files

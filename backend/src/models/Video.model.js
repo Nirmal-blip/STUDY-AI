@@ -64,7 +64,7 @@ const videoSchema = new mongoose.Schema(
 // Text search index
 videoSchema.index({ title: "text", transcript: "text", summary: "text" });
 
-// Compound unique index: same user can't add same video twice, but different users can add same video
-videoSchema.index({ youtubeId: 1, uploadedBy: 1 }, { unique: true });
+// Index for faster queries (not unique - allows multiple uploads of same video)
+videoSchema.index({ youtubeId: 1, uploadedBy: 1 });
 
 module.exports = mongoose.model("Video", videoSchema);
