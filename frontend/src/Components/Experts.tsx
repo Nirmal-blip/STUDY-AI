@@ -7,9 +7,9 @@ import {
 } from 'react-icons/fa';
 
 import tutor1 from '../assets/image.png';
-import tutor2 from '../assets/image1.jpg';
-import tutor3 from '../assets/image2.jpg';
-
+import tutor2 from '../assets/image1.png';
+import tutor3 from '../assets/image2.png';
+import { useNavigate } from 'react-router-dom';
 const tutors = [
   {
     name: "AI Tutor – Core Concepts",
@@ -47,6 +47,7 @@ const tutors = [
 ];
 
 export const Experts: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <section
       id="tutors"
@@ -169,7 +170,7 @@ export const Experts: React.FC = () => {
               specifically for your syllabus and exam needs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-105 transition-all">
+              <button onClick={()=>navigate('/signin')} className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-105 transition-all">
                 Start Studying
               </button>
               <button className="px-6 py-3 rounded-xl border-2 border-indigo-200 text-indigo-600 font-semibold hover:bg-indigo-50 transition-all">

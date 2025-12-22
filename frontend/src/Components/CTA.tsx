@@ -6,14 +6,14 @@ import {
   FaClock,
   FaBrain
 } from 'react-icons/fa';
-
+import { useNavigate } from 'react-router-dom';
 export const CTA: React.FC = () => {
   const features = [
     { icon: <FaLaptop />, text: "Web-Based Learning" },
     { icon: <FaShieldAlt />, text: "Your Data, Fully Private" },
     { icon: <FaClock />, text: "Learn Anytime, Anywhere" }
   ];
-
+const navigate=useNavigate()
   return (
     <section className="section-padding bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600 relative overflow-hidden">
       {/* Background decorations */}
@@ -60,7 +60,7 @@ export const CTA: React.FC = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
-              <button className="px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl shadow-lg hover:scale-105 transition-all">
+              <button onClick={() => navigate('/signin')}className="px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl shadow-lg hover:scale-105 transition-all">
                 Start Studying Now
               </button>
 

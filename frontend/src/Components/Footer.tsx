@@ -10,7 +10,8 @@ import {
   FaArrowUp,
   FaBookOpen,
   FaYoutube,
-  FaShieldAlt
+  FaShieldAlt,
+  FaGithub
 } from 'react-icons/fa';
 
 export const Footer: React.FC = () => {
@@ -61,10 +62,9 @@ export const Footer: React.FC = () => {
   ];
 
   const socialLinks = [
-    { icon: <FaFacebook />, href: "#", label: "Facebook" },
-    { icon: <FaTwitter />, href: "#", label: "Twitter" },
-    { icon: <FaInstagram />, href: "#", label: "Instagram" },
-    { icon: <FaLinkedin />, href: "#", label: "LinkedIn" }
+    { icon: <FaGithub />, href: "https://github.com/Nirmal-blip", label: "Twitter" },
+    { icon: <FaInstagram />, href: "https://www.instagram.com/nirmal_joshi04/", label: "Instagram" },
+    { icon: <FaLinkedin />, href: "https://www.linkedin.com/in/nirmal-blip/", label: "LinkedIn" }
   ];
 
   return (
@@ -100,7 +100,7 @@ export const Footer: React.FC = () => {
               <div className="space-y-3">
                 <div className="flex items-center text-gray-300">
                   <FaEnvelope className="mr-3 text-indigo-400" />
-                  <span>support@aistudytool.com</span>
+                  <span>nirmaljoshi123456789@gmail.com</span>
                 </div>
                 <div className="flex items-center text-gray-300">
                   <FaMapMarkerAlt className="mr-3 text-indigo-400" />

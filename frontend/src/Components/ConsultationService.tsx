@@ -125,7 +125,7 @@ export const ConsultationService: React.FC = () => {
             Ready to study smarter with AI?
           </p>
           <button
-            onClick={() => navigate('/study')}
+            onClick={() => navigate('/signin')}
             className="px-8 py-4 bg-white transition ease-in-out transform hover:scale-105 duration-500 font-semibold rounded-xl border-2 border-indigo-200 text-indigo-600 hover:bg-indigo-50"
           >
             Start Studying Now

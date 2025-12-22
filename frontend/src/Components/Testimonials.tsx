@@ -147,7 +147,7 @@ export const Testimonials: React.FC = () => {
             and revise more effectively.
           </p>
           <button
-            onClick={() => navigate('/study')}
+            onClick={() => navigate('/signin')}
             className="px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-105 transition-all"
           >
             Start Studying Now

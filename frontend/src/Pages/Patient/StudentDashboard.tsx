@@ -24,8 +24,18 @@ interface Feature {
   color: string;
 }
 
+interface User {
+  name?: string;
+  fullname?: string;
+  email?: string;
+}
+
 const StudentDashboard: React.FC = () => {
   const navigate = useNavigate();
+
+  /* ===============================
+     AUTH USER
+     =============================== */
   const [studentName, setStudentName] = useState<string>("Student");
 
   /* ===============================
@@ -39,20 +49,31 @@ const StudentDashboard: React.FC = () => {
   });
 
   /* ===============================
-     LOAD NAME
+     FETCH LOGGED IN USER
      =============================== */
   useEffect(() => {
-    const tempName = localStorage.getItem("studentName");
-    if (tempName) setStudentName(tempName);
-  }, []);
+    const fetchMe = async () => {
+      try {
+        const res = await apiClient.get("/api/auth/me", {
+          withCredentials: true,
+        });
 
-  const handleNameClick = () => {
-    const newName = prompt("Enter your name:", studentName);
-    if (newName && newName.trim()) {
-      setStudentName(newName.trim());
-      localStorage.setItem("studentName", newName.trim());
-    }
-  };
+        const user: User = res.data.user || res.data;
+
+        const name =
+          user.fullname ||
+          user.name ||
+          user.email?.split("@")[0] ||
+          "Student";
+
+        setStudentName(name);
+      } catch (error) {
+        console.error("Failed to load user", error);
+      }
+    };
+
+    fetchMe();
+  }, []);
 
   /* ===============================
      FETCH DASHBOARD STATS
@@ -61,9 +82,11 @@ const StudentDashboard: React.FC = () => {
     const fetchStats = async () => {
       try {
         const [docsRes, videoRes, chatRes] = await Promise.all([
-          apiClient.get("/api/upload/documents"),
-          apiClient.get("/api/video"),
-          apiClient.get("/api/chat/messages/count"),
+          apiClient.get("/api/upload/documents", { withCredentials: true }),
+          apiClient.get("/api/video", { withCredentials: true }),
+          apiClient.get("/api/chat/messages/count", {
+            withCredentials: true,
+          }),
         ]);
 
         const documents = docsRes.data.documents || [];
@@ -109,7 +132,7 @@ const StudentDashboard: React.FC = () => {
       title: "Smart Summaries",
       desc: "Generate exam-focused summaries",
       icon: <FaBookOpen className="w-8 h-8" />,
-      route: "/summary",
+      route: "/study-sessions",
       color: "from-indigo-500 to-purple-500",
     },
   ];
@@ -131,14 +154,7 @@ const StudentDashboard: React.FC = () => {
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-white mb-1">
-                    Hello{" "}
-                    <span
-                      onClick={handleNameClick}
-                      className="cursor-pointer hover:underline"
-                    >
-                      {studentName}
-                    </span>{" "}
-                    👋
+                    Hello {studentName} 👋
                   </h1>
                   <p className="text-indigo-100">
                     Ready to study smarter today?
@@ -216,55 +232,6 @@ const StudentDashboard: React.FC = () => {
             ))}
           </div>
         </section>
-
-        {/* ================= STUDY OVERVIEW (UPDATED) ================= */}
-        {/* <section className="mt-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Your Study Overview
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: <FaBookOpen />,
-                label: "PDFs Uploaded",
-                value: stats.pdfs,
-              },
-              {
-                icon: <FaVideo />,
-                label: "Videos Uploaded",
-                value: stats.videos,
-              },
-              {
-                icon: <FaBrain />,
-                label: "Summaries Generated",
-                value: stats.summaries,
-              },
-              {
-                icon: <FaRobot />,
-                label: "AI Chats",
-                value: stats.chats,
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="bg-white p-6 rounded-3xl border border-indigo-100 shadow"
-              >
-                <div className="flex justify-between mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center text-white">
-                    {item.icon}
-                  </div>
-                  <span className="text-3xl font-bold text-indigo-600">
-                    {item.value}
-                  </span>
-                </div>
-                <h4 className="font-semibold text-gray-800">
-                  {item.label}
-                </h4>
-              </div>
-            ))}
-          </div>
-        </section> */}
 
         <Chatbot />
       </main>

@@ -76,7 +76,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   /* ===================== LOGOUT ===================== */
   const logout = async () => {
     try {
-      await apiClient.get("/api/auth/logout");
+      await apiClient.post("/api/auth/logout",
+      {withCredentials: true,}); // 🔥 REQUIRED
     } finally {
       setUser(null);
     }

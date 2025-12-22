@@ -9,7 +9,7 @@ import {
   FaBrain,
   FaClock
 } from 'react-icons/fa';
-
+import { useNavigate } from 'react-router-dom';
 const faqData = [
   {
     question: "How does this AI study tool work?",
@@ -60,8 +60,9 @@ const FAQItem: React.FC<{ item: typeof faqData[0]; index: number }> = ({
   index
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-
+ 
   return (
+    
     <div
       className="card mb-4 overflow-hidden animate-fade-scale"
       style={{ animationDelay: `${index * 0.1}s` }}
@@ -110,11 +111,13 @@ const FAQItem: React.FC<{ item: typeof faqData[0]; index: number }> = ({
 };
 
 export const FAQ: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <section
       id="faq"
       className="section-padding bg-gradient-to-br from-indigo-50 to-white"
     >
+      
       <div className="container-padding landing-padding-lg">
         {/* Heading */}
         <div className="text-center mb-20 animate-slide-down">
@@ -148,12 +151,11 @@ export const FAQ: React.FC = () => {
               AI-powered learning grounded in your own sources.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-105 transition-all">
+              <button onClick={() => navigate('/signin')}  
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-105 transition-all">
                 Start Studying
               </button>
-              <button className="px-6 py-3 rounded-xl border-2 border-indigo-200 text-indigo-600 font-semibold hover:bg-indigo-50 transition-all">
-                View Demo
-              </button>
+         
             </div>
           </div>
         </div>
