@@ -21,5 +21,3 @@ router.post('/sessions/:id/summary', protect, generateSummary);
 module.exports = router;
 
 
-
-

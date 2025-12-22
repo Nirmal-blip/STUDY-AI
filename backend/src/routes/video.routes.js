@@ -39,5 +39,3 @@ router.post("/:id/summary", protect, generateVideoSummary);
 router.get("/:id/status", protect, getVideoStatus);
 
 module.exports = router;
-
-

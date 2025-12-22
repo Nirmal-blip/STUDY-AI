@@ -48,5 +48,3 @@ if (!fs.existsSync(logsDir)) {
 module.exports = logger;
 
 
-
-
