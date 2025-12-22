@@ -1,9 +1,12 @@
 FROM python:3.11-slim
 
 # Install system dependencies (ffmpeg is required for yt-dlp)
+# pkg-config and build tools may be needed for some Python packages
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     curl \
+    pkg-config \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
