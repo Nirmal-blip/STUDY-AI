@@ -100,12 +100,16 @@ const SignupPage: React.FC = () => {
       <div className="w-full lg:w-[40%] flex items-center justify-center px-6">
         <div className="max-w-md w-full relative">
           {/* BACK */}
-          <button
-            onClick={() => navigate("/")}
-            className="absolute -top-10 right-0 flex items-center text-gray-600 hover:text-indigo-600"
-          >
-            <FaArrowLeft className="mr-2" /> Back
-          </button>
+          <div className="absolute top-[-10px] right-0">
+              <button
+                onClick={() => navigate("/")}
+                className="px-4 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-105 transition-all"
+              >
+                <div className="flex ">
+                <FaArrowLeft className="mr-2 mt-1" />
+                Back</div>
+              </button>
+              </div>
 
           {/* HEADER */}
           <div className="text-center mb-6">

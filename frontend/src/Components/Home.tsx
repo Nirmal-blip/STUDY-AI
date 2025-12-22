@@ -105,7 +105,7 @@ export const Home: React.FC = () => {
               <img
                 src={studyHero}
                 alt="AI Study Assistant"
-                className="w-full h-full object-cover rounded-2xl shadow-2xl transition-transform duration-500 hover:scale-105"
+                className="w-full h-full object-cover rounded-2xl shadow-2xl bg-gradient-to-br from-indigo-500 to-purple-300 transition-transform duration-500 hover:scale-105"
               />
 
               {/* Floating Badge */}

@@ -5,7 +5,8 @@ import {
   FaHeadphones,
   FaVideo
 } from 'react-icons/fa';
-
+import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 export const About: React.FC = () => {
   const stats = [
     { icon: <FaBookOpen />, number: "PDF + Videos", label: "Source-Based Learning" },
@@ -13,7 +14,7 @@ export const About: React.FC = () => {
     { icon: <FaHeadphones />, number: "Audio Mode", label: "Teacher–Student Dialogues" },
     { icon: <FaVideo />, number: "Video", label: "Smart Chapter Summaries" }
   ];
-
+const navigate=useNavigate()
   return (
     <section
       id="about"
@@ -50,12 +51,10 @@ export const About: React.FC = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-105 transition-all">
+              <button onClick={()=>navigate('/signin')} className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-105 transition-all">
                 Explore Features
               </button>
-              <button className="px-6 py-3 rounded-xl border-2 border-indigo-200 text-indigo-600 font-semibold hover:bg-indigo-50 transition-all">
-                How It Works
-              </button>
+             
             </div>
           </div>
 

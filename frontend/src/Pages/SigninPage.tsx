@@ -65,15 +65,16 @@ const SigninPage: React.FC = () => {
         {/* Right Form */}
         <div className="w-full lg:w-[35%] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-indigo-50">
           <div className="max-w-md mx-auto w-full relative">
-
+            
             {/* Back */}
-            <div className="absolute top-0 right-0">
+            <div className="absolute top-[-80px] right-0">
               <button
                 onClick={() => navigate("/")}
-                className="flex items-center text-gray-600 hover:text-indigo-600 transition"
+                className="px-4 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-105 transition-all"
               >
-                <FaArrowLeft className="mr-2" />
-                Back
+                <div className="flex ">
+                <FaArrowLeft className="mr-2 mt-1" />
+                Back</div>
               </button>
             </div>
 
