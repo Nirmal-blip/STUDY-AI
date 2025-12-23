@@ -22,7 +22,7 @@
    MONGODB_URI=your-mongodb-connection-string
    JWT_SECRET=your-secret-key
    FRONTEND_URL=https://your-frontend-domain.com
-   PYTHON_AI_SERVICE_URL=https://your-whisper-service.onrender.com
+   PYTHON_AI_SERVICE_URL=https://study-ai-1-nigc.onrender.com
    OPENAI_API_KEY=your-openai-key
    ```
 

@@ -16,7 +16,7 @@ const logger = require("../utils/logger");
  */
 exports.getTranscript = async (videoId) => {
   try {
-    const pythonServiceUrl = config.pythonAiServiceUrl || "https://study-ai-1-nigc.onrender.com";
+    const pythonServiceUrl = config.pythonAiServiceUrl || "http://localhost:8000";
     const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
     
     logger.info(`Requesting transcription for YouTube video: ${videoId}`);

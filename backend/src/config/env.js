@@ -9,7 +9,7 @@ const config = {
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
   maxFileSize: parseInt(process.env.MAX_FILE_SIZE) || 10485760, // 10MB
   uploadPath: process.env.UPLOAD_PATH || './uploads',
-  pythonAiServiceUrl: process.env.PYTHON_AI_SERVICE_URL || 'http://localhost:8000',
+  pythonAiServiceUrl: process.env.PYTHON_AI_SERVICE_URL || 'http://localhost:8000'||'https://study-ai-1-nigc.onrender.com',
 };
 
 // Validate required environment variables (AI keys are optional now)

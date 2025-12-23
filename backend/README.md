@@ -236,8 +236,8 @@ The backend integrates with a separate FastAPI Whisper service for YouTube video
      # Local development
      PYTHON_AI_SERVICE_URL=http://localhost:8000
      
-     # Production
-     PYTHON_AI_SERVICE_URL=https://your-whisper-service.onrender.com
+     # Production (deployed on Render):
+     PYTHON_AI_SERVICE_URL=https://study-ai-1-nigc.onrender.com
      ```
 
 3. **How It Works**
@@ -261,7 +261,7 @@ When deploying the backend to production:
 
 2. **Verify Connection**:
    ```bash
-   curl https://your-whisper-service-url/health
+   curl https://study-ai-1-nigc.onrender.com/health
    ```
 
 3. **Test Transcription**:
