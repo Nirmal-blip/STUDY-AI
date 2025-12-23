@@ -1,19 +1,19 @@
 # FastAPI and server
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-python-multipart==0.0.6
-pydantic==2.5.0
-pydantic-settings==2.1.0
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+python-multipart==0.0.12
+pydantic==2.9.2
+pydantic-settings==2.5.2
 
 # Whisper transcription
-faster-whisper==0.10.0
+faster-whisper==1.0.3
 
 # YouTube download
-yt-dlp==2023.11.16
+yt-dlp==2024.8.6
 
 # Note: ffmpeg-python is not needed - yt-dlp uses ffmpeg system binary directly
 # ffmpeg must be installed on the system (via apt-get, brew, etc.)
 
 # Utilities
-python-dotenv==1.0.0
+python-dotenv==1.0.1
 

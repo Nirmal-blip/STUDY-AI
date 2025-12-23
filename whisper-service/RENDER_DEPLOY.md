@@ -46,7 +46,8 @@ Fill in the service configuration:
 
 2. **Build & Deploy Settings:**
    - **Environment**: Select **"Python 3"** ⚠️ **NOT Docker**
-   - **Build Command**: `pip install -r requirements.txt`
+   - **Python Version**: `3.11` (important - avoids Rust compilation issues)
+   - **Build Command**: `pip install --upgrade pip && pip install -r requirements.txt`
    - **Start Command**: `uvicorn app:app --host 0.0.0.0 --port $PORT`
 
    ⚠️ **Note about ffmpeg**: Render's free tier doesn't allow `apt-get` in build scripts. You have two options:
