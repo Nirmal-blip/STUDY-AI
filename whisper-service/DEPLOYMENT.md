@@ -16,89 +16,62 @@ YouTube Video → Audio → Transcript
 
 ## Deployment Options
 
-### Option 1: Render (Recommended with Docker)
+### Option 1: Railway (Recommended)
 
-Render has limitations with `apt-get` in build scripts. Use Docker instead.
+Railway supports system packages and is easy to deploy.
 
-#### Dockerfile
+#### Railway Configuration
 
-Create `Dockerfile` in `whisper-service/`:
-
-```dockerfile
-FROM python:3.11-slim
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    ffmpeg \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set working directory
-WORKDIR /app
-
-# Copy requirements and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy application code
-COPY app.py .
-
-# Expose port
-EXPOSE 8000
-
-# Run the application
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
-#### Render Configuration
-
-1. **New Web Service**
-   - Connect your repository
-   - Root Directory: `whisper-service`
-   - Build Command: (leave empty, Docker handles it)
-   - Start Command: (leave empty, Docker handles it)
-   - Dockerfile Path: `Dockerfile`
-
-2. **Environment Variables**
+1. **New Project → Deploy from GitHub**
+2. **Root Directory**: `whisper-service`
+3. **Build Command**: `pip install -r requirements.txt && apt-get update && apt-get install -y ffmpeg`
+4. **Start Command**: `uvicorn app:app --host 0.0.0.0 --port $PORT`
+5. **Environment Variables**: 
    ```
-   PORT=8000
-   HOST=0.0.0.0
-   ENV=production
    WHISPER_MODEL=small
    WHISPER_DEVICE=cpu
    WHISPER_COMPUTE_TYPE=int8
    MAX_VIDEO_DURATION=900
    REQUEST_TIMEOUT=600
    TEMP_DIR=/tmp/whisper-service
+   ENV=production
    ```
 
-3. **Update Node.js Backend**
+6. **Update Node.js Backend**
+   - Set `PYTHON_AI_SERVICE_URL` to your Railway service URL
+   - Example: `https://whisper-service.up.railway.app`
+
+### Option 2: Render (Python 3)
+
+Render free tier has limitations with system packages.
+
+#### Render Configuration
+
+1. **New Web Service**
+   - Connect your repository
+   - Root Directory: `whisper-service`
+   - Environment: **Python 3** (NOT Docker)
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `uvicorn app:app --host 0.0.0.0 --port $PORT`
+
+2. **Environment Variables**
+   ```
+   WHISPER_MODEL=small
+   WHISPER_DEVICE=cpu
+   WHISPER_COMPUTE_TYPE=int8
+   MAX_VIDEO_DURATION=900
+   REQUEST_TIMEOUT=600
+   TEMP_DIR=/tmp/whisper-service
+   ENV=production
+   ```
+
+3. **⚠️ Limitation**: Render free tier doesn't support `apt-get`, so ffmpeg won't be installed. YouTube downloads will fail. Use Railway or VPS instead.
+
+4. **Update Node.js Backend**
    - Set `PYTHON_AI_SERVICE_URL` to your Render service URL
    - Example: `https://whisper-service.onrender.com`
 
-### Option 2: Railway
-
-Railway supports system packages better than Render.
-
-#### Build Script
-
-Create `build.sh`:
-
-```bash
-#!/bin/bash
-apt-get update
-apt-get install -y ffmpeg
-pip install -r requirements.txt
-```
-
-#### Railway Configuration
-
-1. **New Project → Deploy from GitHub**
-2. **Root Directory**: `whisper-service`
-3. **Build Command**: `bash build.sh`
-4. **Start Command**: `uvicorn app:app --host 0.0.0.0 --port $PORT`
-5. **Environment Variables**: Same as Render
-
-### Option 3: VPS (Ubuntu/Debian)
+### Option 3: VPS (Ubuntu/Debian) - Full Control
 
 #### Setup Script
 

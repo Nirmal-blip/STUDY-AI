@@ -12,7 +12,7 @@ faster-whisper==0.10.0
 yt-dlp==2023.11.16
 
 # Note: ffmpeg-python is not needed - yt-dlp uses ffmpeg system binary directly
-# ffmpeg is installed via apt-get in Dockerfile
+# ffmpeg must be installed on the system (via apt-get, brew, etc.)
 
 # Utilities
 python-dotenv==1.0.0

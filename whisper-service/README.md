@@ -8,7 +8,6 @@ FastAPI service for YouTube video transcription using faster-whisper.
 - **Audio File Upload**: Supports direct audio file transcription
 - **Automatic Cleanup**: Temporary files are automatically cleaned up
 - **Production Ready**: Proper error handling, timeouts, and logging
-- **Docker Support**: Ready-to-deploy Docker container
 - **Native Format Support**: Downloads audio in native formats (webm, m4a, mp3, opus) without conversion
 
 ## Setup
@@ -32,9 +31,10 @@ sudo apt-get install -y ffmpeg
 brew install ffmpeg
 ```
 
-**On Render/Cloud:**
-- Add a build script that installs ffmpeg
-- Or use a Docker image with ffmpeg pre-installed
+**On Cloud Platforms:**
+- Railway: Use `apt-get` in build command
+- Render: Free tier doesn't support `apt-get` (use Railway or VPS instead)
+- VPS: Full control, install via apt-get
 
 ### 3. Environment Variables
 
@@ -121,25 +121,40 @@ Health check endpoint.
 }
 ```
 
-## Deployment on Render
+## Deployment
 
-### Build Command
+### Railway (Recommended)
+
+**Build Command:**
 ```bash
 pip install -r requirements.txt && apt-get update && apt-get install -y ffmpeg
 ```
 
-**Note:** Render may have restrictions on `apt-get`. Consider:
-1. Using a Docker image with ffmpeg pre-installed
-2. Using Render's buildpacks that include ffmpeg
-3. Using a VPS or Railway instead
-
-### Start Command
+**Start Command:**
 ```bash
 uvicorn app:app --host 0.0.0.0 --port $PORT
 ```
 
+### Render (Python 3)
+
+**Build Command:**
+```bash
+pip install -r requirements.txt
+```
+
+**Start Command:**
+```bash
+uvicorn app:app --host 0.0.0.0 --port $PORT
+```
+
+**Note:** Render free tier doesn't support `apt-get`, so ffmpeg won't be available. Use Railway or VPS for full functionality.
+
+### VPS
+
+See `DEPLOYMENT.md` for detailed VPS setup instructions.
+
 ### Environment Variables
-Set all variables from `.env.example` in Render's dashboard.
+Set all variables from `.env.example` in your hosting platform's dashboard.
 
 ## Best Practices
 
@@ -153,7 +168,8 @@ Set all variables from `.env.example` in Render's dashboard.
 
 ### ffmpeg not found
 - Ensure ffmpeg is installed and in PATH
-- On Render, may need Docker or custom buildpack
+- On Railway: Add `apt-get install -y ffmpeg` to build command
+- On Render free tier: Not supported, use Railway or VPS instead
 
 ### Model download fails
 - Check internet connection

@@ -2,11 +2,11 @@
 
 ## Quick Deployment Options
 
-### 🚀 Option 1: Render (Easiest - Recommended)
+### 🚂 Option 1: Railway (Recommended - Supports ffmpeg)
 
 #### Prerequisites
 - GitHub repository with your code
-- Render account (free tier available)
+- Railway account (free tier available)
 
 #### Steps
 
@@ -17,57 +17,47 @@
    git push origin main
    ```
 
-2. **Create Render Web Service**
-   - Go to [render.com](https://render.com)
-   - Click "New +" → "Web Service"
-   - Connect your GitHub repository
-   - Select the repository
+2. **Create Railway Project**
+   - Go to [railway.app](https://railway.app)
+   - Click "New Project" → "Deploy from GitHub repo"
+   - Select your repository
 
 3. **Configure Service**
-   - **Name**: `whisper-service` (or any name)
    - **Root Directory**: `whisper-service`
-   - **Environment**: `Docker`
-   - **Dockerfile Path**: `whisper-service/Dockerfile` (or just `Dockerfile` if root is already set)
-   - **Build Command**: (leave empty - Docker handles it)
-   - **Start Command**: (leave empty - Docker handles it)
+   - **Build Command**: `pip install -r requirements.txt && apt-get update && apt-get install -y ffmpeg`
+   - **Start Command**: `uvicorn app:app --host 0.0.0.0 --port $PORT`
 
 4. **Set Environment Variables**
-   Click "Environment" tab and add:
+   Click "Variables" tab and add:
    ```
-   PORT=8000
-   HOST=0.0.0.0
-   ENV=production
    WHISPER_MODEL=small
    WHISPER_DEVICE=cpu
    WHISPER_COMPUTE_TYPE=int8
    MAX_VIDEO_DURATION=900
    REQUEST_TIMEOUT=600
    TEMP_DIR=/tmp/whisper-service
+   ENV=production
    ```
 
 5. **Deploy**
-   - Click "Create Web Service"
-   - Wait for build to complete (5-10 minutes first time)
-   - Your service will be at: `https://whisper-service.onrender.com` (or your custom name)
+   - Railway auto-deploys on push
+   - Get your service URL from Railway dashboard
+   - Example: `https://whisper-service.up.railway.app`
 
 6. **Update Node.js Backend**
-   In your Node.js backend `.env` file (on Render or locally):
+   In your Node.js backend `.env` file:
    ```env
-   PYTHON_AI_SERVICE_URL=https://whisper-service.onrender.com
-   ```
-   Or if you used a custom name:
-   ```env
-   PYTHON_AI_SERVICE_URL=https://your-service-name.onrender.com
+   PYTHON_AI_SERVICE_URL=https://your-service.up.railway.app
    ```
 
 7. **Test**
    ```bash
-   curl https://your-service-name.onrender.com/health
+   curl https://your-service.up.railway.app/health
    ```
 
 ---
 
-### 🚂 Option 2: Railway (Alternative)
+### 🚀 Option 2: Render (Python 3 - Limited)
 
 #### Steps
 
@@ -97,7 +87,7 @@
 
 ---
 
-### 🖥️ Option 3: VPS (Full Control)
+### 🖥️ Option 3: VPS (Full Control - Recommended for Production)
 
 #### Steps
 
