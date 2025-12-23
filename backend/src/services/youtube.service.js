@@ -16,13 +16,22 @@ const logger = require("../utils/logger");
  */
 exports.getTranscript = async (videoId) => {
   try {
-    const pythonServiceUrl = config.pythonAiServiceUrl || "http://localhost:8000";
+    // Use config value directly - don't override with fallback
+    const pythonServiceUrl = config.pythonAiServiceUrl;
     const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
     
-    logger.info(`Requesting transcription for YouTube video: ${videoId}`);
-    logger.info(`Using Python service: ${pythonServiceUrl}`);
+    logger.info(`🎬 Requesting transcription for YouTube video: ${videoId}`);
+    logger.info(`🌐 Using Python service URL: ${pythonServiceUrl}`);
+    logger.info(`📹 YouTube URL: ${youtubeUrl}`);
+    logger.info(`🔍 Full endpoint: ${pythonServiceUrl}/transcribe-youtube`);
+    
+    // Validate URL before making request
+    if (!pythonServiceUrl || pythonServiceUrl === 'undefined') {
+      throw new Error(`Python service URL is not configured. Current value: ${pythonServiceUrl}`);
+    }
     
     // Call FastAPI /transcribe-youtube endpoint
+    logger.info(`📤 Sending POST request to: ${pythonServiceUrl}/transcribe-youtube`);
     const response = await axios.post(
       `${pythonServiceUrl}/transcribe-youtube`,
       {
@@ -32,9 +41,15 @@ exports.getTranscript = async (videoId) => {
         timeout: 600000, // 10 minutes timeout
         headers: {
           "Content-Type": "application/json"
+        },
+        validateStatus: function (status) {
+          return status < 500; // Don't throw for 4xx errors, we'll handle them
         }
       }
     );
+    
+    logger.info(`📥 Response status: ${response.status}`);
+    logger.info(`📥 Response data keys: ${Object.keys(response.data || {}).join(', ')}`);
     
     const { transcript, duration, language, metadata } = response.data;
     
@@ -56,25 +71,39 @@ exports.getTranscript = async (videoId) => {
       }
     };
   } catch (err) {
-    logger.error(`❌ Whisper transcript failed for ${videoId}:`, err.message);
+    logger.error(`❌ Whisper transcript failed for ${videoId}`);
+    logger.error(`❌ Error message: ${err.message}`);
+    logger.error(`❌ Error code: ${err.code || 'N/A'}`);
+    logger.error(`❌ Error stack: ${err.stack}`);
+    logger.error(`❌ Attempted URL: ${config.pythonAiServiceUrl}/transcribe-youtube`);
     
     // Handle specific error cases
     if (err.response) {
       // API returned an error response
       const status = err.response.status;
-      const detail = err.response.data?.detail || err.message;
+      const detail = err.response.data?.detail || err.response.data?.message || err.message;
+      
+      logger.error(`📥 API Response Status: ${status}`);
+      logger.error(`📥 API Response Data:`, JSON.stringify(err.response.data, null, 2));
       
       if (status === 400) {
-        logger.error(`Bad request: ${detail}`);
+        logger.error(`❌ Bad request: ${detail}`);
       } else if (status === 503) {
-        logger.error(`Service unavailable: ${detail}`);
+        logger.error(`❌ Service unavailable: ${detail}`);
+      } else if (status === 404) {
+        logger.error(`❌ Endpoint not found. Check if ${config.pythonAiServiceUrl}/transcribe-youtube exists`);
       } else {
-        logger.error(`API error (${status}): ${detail}`);
+        logger.error(`❌ API error (${status}): ${detail}`);
       }
     } else if (err.code === "ECONNREFUSED") {
-      logger.error(`Connection refused. Is the Python service running at ${config.pythonAiServiceUrl}?`);
-    } else if (err.code === "ETIMEDOUT") {
-      logger.error("Request timed out. Video may be too long or service is overloaded.");
+      logger.error(`❌ Connection refused. Is the Python service running at ${config.pythonAiServiceUrl}?`);
+      logger.error(`❌ Check: curl ${config.pythonAiServiceUrl}/health`);
+    } else if (err.code === "ETIMEDOUT" || err.code === "ECONNABORTED") {
+      logger.error(`❌ Request timed out. Video may be too long or service is overloaded.`);
+    } else if (err.code === "ENOTFOUND" || err.code === "EAI_AGAIN") {
+      logger.error(`❌ DNS resolution failed. Check if ${config.pythonAiServiceUrl} is a valid URL`);
+    } else if (err.message && err.message.includes('Network Error')) {
+      logger.error(`❌ Network error. Check CORS and service availability`);
     }
     
     return { 
