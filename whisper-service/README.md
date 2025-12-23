@@ -8,6 +8,7 @@ FastAPI service for YouTube video transcription using faster-whisper.
 - **Audio File Upload**: Supports direct audio file transcription
 - **Automatic Cleanup**: Temporary files are automatically cleaned up
 - **Production Ready**: Proper error handling, timeouts, and logging
+- **Docker Support**: Ready-to-deploy Docker container (recommended)
 - **Native Format Support**: Downloads audio in native formats (webm, m4a, mp3, opus) without conversion
 
 ## Setup
@@ -123,7 +124,22 @@ Health check endpoint.
 
 ## Deployment
 
-### Railway (Recommended)
+### Render with Docker (Recommended - Easiest)
+
+**Configuration:**
+- Environment: **Docker**
+- Root Directory: `whisper-service`
+- Docker Build Context Directory: `whisper-service`
+- Dockerfile Path: `Dockerfile`
+- Build/Start Commands: (leave empty - Docker handles it)
+
+**Advantages:**
+- ✅ Automatic ffmpeg installation
+- ✅ No Rust compilation issues
+- ✅ Consistent environment
+- ✅ See `RENDER_DEPLOY_DOCKER.md` for detailed steps
+
+### Railway (Alternative - Supports ffmpeg)
 
 **Build Command:**
 ```bash
@@ -135,7 +151,7 @@ pip install -r requirements.txt && apt-get update && apt-get install -y ffmpeg
 uvicorn app:app --host 0.0.0.0 --port $PORT
 ```
 
-### Render (Python 3)
+### Render (Python 3 - Limited)
 
 **Build Command:**
 ```bash
@@ -147,7 +163,7 @@ pip install -r requirements.txt
 uvicorn app:app --host 0.0.0.0 --port $PORT
 ```
 
-**Note:** Render free tier doesn't support `apt-get`, so ffmpeg won't be available. Use Railway or VPS for full functionality.
+**Note:** Render free tier doesn't support `apt-get`, so ffmpeg won't be available. Use Docker or Railway instead.
 
 ### VPS
 

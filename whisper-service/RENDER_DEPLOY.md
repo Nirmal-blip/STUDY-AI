@@ -1,5 +1,9 @@
 # Deploy Whisper Service on Render WITHOUT Docker
 
+> **Note**: For deployment WITH Docker (recommended), see `RENDER_DEPLOY_DOCKER.md`
+> 
+> **Recommendation**: Docker deployment is easier and more reliable. Use Docker if possible.
+
 ## Prerequisites
 
 - GitHub account

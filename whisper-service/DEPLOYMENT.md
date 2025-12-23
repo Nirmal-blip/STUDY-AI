@@ -16,7 +16,64 @@ YouTube Video → Audio → Transcript
 
 ## Deployment Options
 
-### Option 1: Railway (Recommended)
+### Option 1: Render with Docker (Recommended - Easiest)
+
+Docker handles all dependencies automatically, including ffmpeg.
+
+#### Dockerfile
+
+The `Dockerfile` is already created in `whisper-service/`:
+
+```dockerfile
+FROM python:3.11-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    curl \
+    pkg-config \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app.py .
+
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+#### Render Configuration
+
+1. **New Web Service**
+   - Connect your repository
+   - Root Directory: `whisper-service`
+   - Environment: **Docker** ⚠️ **CRITICAL**
+   - Docker Build Context Directory: `whisper-service`
+   - Dockerfile Path: `Dockerfile`
+   - Build Command: (leave empty - Docker handles it)
+   - Start Command: (leave empty - Docker handles it)
+
+2. **Environment Variables**
+   ```
+   PORT=8000
+   HOST=0.0.0.0
+   ENV=production
+   WHISPER_MODEL=small
+   WHISPER_DEVICE=cpu
+   WHISPER_COMPUTE_TYPE=int8
+   MAX_VIDEO_DURATION=900
+   REQUEST_TIMEOUT=600
+   TEMP_DIR=/tmp/whisper-service
+   ```
+
+3. **Update Node.js Backend**
+   - Set `PYTHON_AI_SERVICE_URL` to your Render service URL
+   - Example: `https://whisper-service.onrender.com`
+
+**See `RENDER_DEPLOY_DOCKER.md` for detailed step-by-step instructions.**
+
+### Option 2: Railway (Alternative - Supports ffmpeg)
 
 Railway supports system packages and is easy to deploy.
 

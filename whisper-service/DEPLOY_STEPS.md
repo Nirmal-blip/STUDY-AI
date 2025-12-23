@@ -2,7 +2,69 @@
 
 ## Quick Deployment Options
 
-### 🚂 Option 1: Railway (Recommended - Supports ffmpeg)
+### 🐳 Option 1: Render with Docker (Recommended - Easiest)
+
+#### Prerequisites
+- GitHub repository with your code
+- Render account (free tier available)
+
+#### Steps
+
+1. **Push code to GitHub**
+   ```bash
+   git add whisper-service/
+   git commit -m "Add Whisper transcription service"
+   git push origin main
+   ```
+
+2. **Create Render Web Service**
+   - Go to [render.com](https://render.com)
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repository
+
+3. **Configure Service**
+   - **Name**: `whisper-service` (or any name)
+   - **Root Directory**: `whisper-service`
+   - **Environment**: **Docker** ⚠️ **CRITICAL**
+   - **Docker Build Context Directory**: `whisper-service`
+   - **Dockerfile Path**: `Dockerfile`
+   - **Build Command**: (leave empty - Docker handles it)
+   - **Start Command**: (leave empty - Docker handles it)
+
+4. **Set Environment Variables**
+   Click "Environment" tab and add:
+   ```
+   PORT=8000
+   HOST=0.0.0.0
+   ENV=production
+   WHISPER_MODEL=small
+   WHISPER_DEVICE=cpu
+   WHISPER_COMPUTE_TYPE=int8
+   MAX_VIDEO_DURATION=900
+   REQUEST_TIMEOUT=600
+   TEMP_DIR=/tmp/whisper-service
+   ```
+
+5. **Deploy**
+   - Click "Create Web Service"
+   - Wait for build to complete (5-10 minutes first time)
+   - Your service will be at: `https://whisper-service.onrender.com`
+
+6. **Update Node.js Backend**
+   ```env
+   PYTHON_AI_SERVICE_URL=https://your-service-name.onrender.com
+   ```
+
+7. **Test**
+   ```bash
+   curl https://your-service-name.onrender.com/health
+   ```
+
+**See `RENDER_DEPLOY_DOCKER.md` for detailed step-by-step guide.**
+
+---
+
+### 🚂 Option 2: Railway (Alternative - Supports ffmpeg)
 
 #### Prerequisites
 - GitHub repository with your code
