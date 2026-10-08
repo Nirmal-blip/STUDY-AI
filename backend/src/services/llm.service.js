@@ -21,10 +21,13 @@ Rules:
 
   try {
     const completion = await groq.chat.completions.create({
-      model: "llama-3.1-8b-instant",
+      model: "openai/gpt-oss-20b", // ✅ updated model
       temperature: 0.2,
       messages: [
-        { role: "system", content: systemPrompt },
+        {
+          role: "system",
+          content: systemPrompt,
+        },
         {
           role: "user",
           content: `
