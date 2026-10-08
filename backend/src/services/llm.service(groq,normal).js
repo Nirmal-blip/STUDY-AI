@@ -12,14 +12,20 @@ const generateChatResponse = async (
   const systemPrompt = `
 You are an AI study assistant similar to NotebookLM.
 
+Answer the user's question using the provided study material.
+If the answer is not present in the study material, clearly say that it is not available in the provided material.
+Do not invent information.
 `;
 
   try {
     const completion = await groq.chat.completions.create({
-      model: "llama-3.1-8b-instant",
+      model: "openai/gpt-oss-20b",
       temperature: 0.2,
       messages: [
-        { role: "system", content: systemPrompt },
+        {
+          role: "system",
+          content: systemPrompt,
+        },
         {
           role: "user",
           content: `
